@@ -13,10 +13,12 @@
 
 
 Route::prefix('web')->group(function () {
-    Route::resource('devices','DeviceController');
+    Route::get('devices','DeviceController@index');
 });
+
 
 
 Route::get('/', function () {
     return view('welcome');
 });
+

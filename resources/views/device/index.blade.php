@@ -7,8 +7,8 @@
         <title>Index Page</title>
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
         <script src="{{asset('js/jquery-3.2.1.min.js')}}"></script>
-        <script src="{{asset('js/fleetsu.js
-        ')}}"></script>
+        <script src="{{asset('js/jstz.min.js')}}"></script>
+        <script src="{{asset('js/fleetsu.js')}}"></script>
     </head>
     <body>
         <div class="container">

@@ -8,17 +8,25 @@ use Session;
 
 define("ONEDAY", 86400);
 
-class DeviceController extends Controller
+class DeviceApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request) 
     {
-        //$devices = Device::all()->toArray();
-        return view('device.index');
+        $devices = Device::all()->toArray();
+        $timeZone = $request->input('timeZone');
+        foreach($devices as &$device) {
+            $dt = new \DateTime($device['last_reported']);
+            $tz = new \DateTimeZone($timeZone);
+            $dt->setTimezone($tz);
+            $device['status'] = ((time() - strtotime($device['last_reported'])) > ONEDAY) ? 0 : 1;
+            $device['last_reported'] = $dt->format('Y-m-d H:i:s');
+        }
+        return $devices;
     }
 
     /**
@@ -28,7 +36,6 @@ class DeviceController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -39,7 +46,13 @@ class DeviceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $device = new Device;
+        $device->device_id = uniqid();
+        $device->device_label = $request->device_label;
+        $device->last_reported = date("Y-m-d H:i:s",time());
+        $device->save();        
+        return ['device_id' => $device->device_id];
+        
     }
 
     /**
@@ -73,7 +86,17 @@ class DeviceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /*device_id
+        device_label
+        last_reported
+        created_at
+        updated_at*/
+        
+        $device = Device::find($id);
+        $device->last_reported = date("Y-m-d H:i:s",time());
+        $device->save();        
+        return ['device_id' => $device->device_id];
+        
     }
 
     /**
