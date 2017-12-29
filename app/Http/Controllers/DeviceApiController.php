@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\FleetsuLib;
 use App\Device;
 use Session;
 
@@ -20,11 +21,8 @@ class DeviceApiController extends Controller
         $devices = Device::all()->toArray();
         $timeZone = $request->input('timeZone');
         foreach($devices as &$device) {
-            $dt = new \DateTime($device['last_reported']);
-            $tz = new \DateTimeZone($timeZone);
-            $dt->setTimezone($tz);
             $device['status'] = ((time() - strtotime($device['last_reported'])) > ONEDAY) ? 0 : 1;
-            $device['last_reported'] = $dt->format('Y-m-d H:i:s');
+            $device['last_reported'] = FleetsuLib::formatDateTime($device['last_reported'], $timeZone);
         }
         return $devices;
     }
@@ -47,7 +45,7 @@ class DeviceApiController extends Controller
     public function store(Request $request)
     {
         $device = new Device;
-        $device->device_id = uniqid();
+        $device->device_id = FleetsuLib::uuid();        //uniqid();
         $device->device_label = $request->device_label;
         $device->last_reported = date("Y-m-d H:i:s",time());
         $device->save();        

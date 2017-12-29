@@ -16,3 +16,4 @@ class DevicesTableSeeder extends Seeder
         });
     }
 }
+
